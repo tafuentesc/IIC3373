@@ -77,7 +77,7 @@ public class RBTree implements ISearchTree {
 		
 		RBNode node = root;
 		
-		if(value == 529368)
+		if(value == 81)
 		{
 			int a = 0;
 		}
@@ -109,22 +109,37 @@ public class RBTree implements ISearchTree {
 				else if(node.left == null && node.right != null)
 				{
 					if(node.parent == null)
+					{
 						root = node.right;
-					else if(node.parent.left == node)
+						node.right.parent = root;
+					}else if(node.parent.left == node)
+					{
 						node.parent.left = node.right;
-					else if(node.parent.right == node)
+						node.right.parent = node.parent;
+					}else if(node.parent.right == node)
+					{
 						node.parent.right = node.right;						
+						node.right.parent = node.parent;
+					}
 					
 					return;
 				}
 				else if(node.right == null && node.left != null)
 				{
 					if(node.parent == null)
+					{
 						root = node.left;
-					else if(node.parent.left == node)
+						node.left.parent = root;
+					}
+					else if(node.parent.left == node){
 						node.parent.left = node.left;
-					else if(node.parent.right == node)
-						node.parent.right = node.left;						
+						node.left.parent = node.parent;
+					}
+					else if(node.parent.right == node){
+						node.parent.right = node.left;
+						node.left.parent = node.parent;
+					}
+					return;
 				}
 				// 3. Posee ambos hijos: en este caso lo vamos desplazando por la derecha
 				else
@@ -198,32 +213,12 @@ public class RBTree implements ISearchTree {
 						node.parent = auxNode;
 						node.parent.left = node;
 					}
-					/*
-					node.right = auxNode.right;
-					node.right.parent = node;
-					auxNode.right = node;
-					
-					auxNode.parent = node.parent;
-					node.parent = auxNode;
-					
-					auxNode = node.left;
-					node.left = node.parent.left;
-					node.left.parent = node;
-					
-					auxNode.parent = node.parent;
-					node.parent.left = auxNode;
-					
-					// Si el papá original de node es null, significa que era la raíz
-					// => actualizamos el puntero
-					if(node.parent.parent == null)
-						root = node.parent;
-					*/
 				}
 			}
 		}
 	}
 	
-	public void balance()
+	public void balance(RBNode node)
 	{
 		
 	}

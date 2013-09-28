@@ -18,8 +18,8 @@ public class Tester {
         String path = null;//scanner.nextLine();
         scanner.close();
         
-        //path ="Test/test1_STP.txt";
-        path ="Test/test0.txt";
+        path ="Test/test1_STP.txt";
+        //path ="Test/test0.txt";
 
         long time = System.currentTimeMillis();
 

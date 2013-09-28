@@ -2,12 +2,13 @@ package edu.puc.concurrentavl;
 
 import java.util.HashMap;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TestThread extends Thread {
     public enum TesterOp { Finished, Aborted }
 
     public static Object[] mLocks;
-    private static HashMap<Integer, Boolean> mFlags;
+    private static ConcurrentHashMap<Integer, Boolean> mFlags;
 
     private Queue<Command> mCommands;
     private ISearchTree mTree;
@@ -18,7 +19,7 @@ public class TestThread extends Thread {
             mLocks[i] = new Object();
         }
 
-        mFlags = new HashMap<Integer, Boolean>();
+        mFlags = new ConcurrentHashMap<Integer, Boolean>();
     }
 
     public TestThread(ISearchTree tree, Queue<Command> commands) {
