@@ -31,6 +31,8 @@ public class TestThread extends Thread {
     public void run() {
         while (!mCommands.isEmpty()) {
 
+        	//mTree.printTree();
+        	
             Command c = mCommands.poll();
             if (c.getOperation() == Operation.Insert) {
                 mTree.insert(c.getValue());

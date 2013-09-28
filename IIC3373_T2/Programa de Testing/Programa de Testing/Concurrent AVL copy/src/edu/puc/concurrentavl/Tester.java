@@ -18,8 +18,8 @@ public class Tester {
         String path = null;//scanner.nextLine();
         scanner.close();
         
-        path ="Test/test1_STP.txt";
-        //path ="Test/test0.txt";
+        //path ="Test/test1_STP.txt";
+        path ="Test/test0.txt";
 
         long time = System.currentTimeMillis();
 
@@ -60,8 +60,8 @@ public class Tester {
             System.out.println("Test Passed");
             long delta = System.currentTimeMillis() - time;
             System.out.println("The test took " + delta + " ms.");
-
-
+            
+            tree.printTree();
 
         } catch (FileNotFoundException e) {
             System.out
