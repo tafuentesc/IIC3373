@@ -20,7 +20,7 @@ public class RBTree implements ISearchTree {
 	}
 	
 	@Override
-	public synchronized boolean find(int value) {
+	public boolean find(int value) {
 		RBNode node = root;
 		
 		while(node != null)
@@ -36,7 +36,7 @@ public class RBTree implements ISearchTree {
 	}
 
 	@Override
-	public synchronized void insert(int value) {
+	public void insert(int value) {
 		
 		if(root == null){
 			root = new RBNode(value, color.BLACK, null);
@@ -237,7 +237,7 @@ public class RBTree implements ISearchTree {
 		aux.value = v;
 	}
 
-	private synchronized boolean deleteNode(RBNode X)
+	private boolean deleteNode(RBNode X)
 	{
 		boolean deleted = false;
 		
@@ -674,7 +674,7 @@ public class RBTree implements ISearchTree {
 	}
 	
 	@Override
-	public synchronized void delete(int value)
+	public void delete(int value)
 	{
 		topDownDelete(value);
 	}
