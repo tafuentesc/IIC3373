@@ -9,7 +9,7 @@ public class SyncSearchTree implements ISearchTree {
 	
 	private ISearchTree tree;
 	private final Semaphore rw = new Semaphore(1, true); 
-	private final Semaphore counterMutex = new Semaphore(1, true); 
+	private final Semaphore counterMutex; 
 	private int readerCount = 0;
 	private SyncPolicy syncPolicy;
 
@@ -113,15 +113,17 @@ public class SyncSearchTree implements ISearchTree {
 		//tree.printTree();
 	}
 	
-	public SyncSearchTree(SyncPolicy policy)
+	public SyncSearchTree(SyncPolicy policy, boolean fair)
 	{
 		this.tree = new RBTree();
 		syncPolicy = policy;
+		counterMutex = new Semaphore(1, fair);
 	}
 	
-	public SyncSearchTree(ISearchTree tree, SyncPolicy policy)
+	public SyncSearchTree(ISearchTree tree, SyncPolicy policy, boolean fair)
 	{
 		this.tree = tree;
 		syncPolicy = policy;
+		counterMutex = new Semaphore(1, fair);
 	}
 }

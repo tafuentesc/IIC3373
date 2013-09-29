@@ -41,7 +41,7 @@ public class Tester {
             }
             scanner.close();
 
-            ISearchTree tree = new SyncSearchTree(SyncPolicy.MultiSearch); // RBTree();// null; // Reemplazar con la
+            ISearchTree tree = new SyncSearchTree(SyncPolicy.MultiSearch, false); // RBTree();// null; // Reemplazar con la
             // implementacion del alumno
 
             TestThread[] threads = new TestThread[numberOfThreads];
