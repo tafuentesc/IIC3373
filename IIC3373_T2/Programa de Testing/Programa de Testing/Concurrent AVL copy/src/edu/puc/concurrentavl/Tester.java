@@ -19,7 +19,8 @@ public class Tester {
         scanner.close();
         
         //path ="Test/test1_STP.txt";
-        path ="Test/test0.txt";
+        //path ="Test/test0.txt";
+        path ="Test/test3.txt";
 
         long time = System.currentTimeMillis();
 
@@ -61,7 +62,7 @@ public class Tester {
             long delta = System.currentTimeMillis() - time;
             System.out.println("The test took " + delta + " ms.");
             
-            tree.printTree();
+            //tree.printTree();
 
         } catch (FileNotFoundException e) {
             System.out

@@ -29,11 +29,13 @@ public class TestThread extends Thread {
 
     @Override
     public void run() {
+    	int cmdCount = 0;
         while (!mCommands.isEmpty()) {
 
         	//mTree.printTree();
-        	
-            Command c = mCommands.poll();
+        	cmdCount++;
+
+        	Command c = mCommands.poll();
             if (c.getOperation() == Operation.Insert) {
                 mTree.insert(c.getValue());
             } else if (c.getOperation() == Operation.Delete) {
@@ -41,7 +43,7 @@ public class TestThread extends Thread {
             } else if (c.getOperation() == Operation.Find) {
                 boolean result = mTree.find(c.getValue());
                 if (result != c.isExpected()) {
-                    System.out.println("Assert failed for value " + c.getValue() + ". Expected " + c.isExpected() + ", obtained " + result + ".");
+                    System.out.println("Assert failed for value " + c.getValue() + ". Expected " + c.isExpected() + ", obtained " + result + " (ln. " + cmdCount +").");
                     System.exit(0);
                 }
             } else if (c.getOperation() == Operation.SynchroInsert) {
