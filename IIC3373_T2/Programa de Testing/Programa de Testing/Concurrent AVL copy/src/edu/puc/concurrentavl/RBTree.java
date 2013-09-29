@@ -231,7 +231,17 @@ public class RBTree implements ISearchTree {
 	{
 		// Sabemos que X tiene al menos 1 hijo rojo:
 		// Bajamos el nivel que corresponde
-		do
+		if(value < X.value)
+			X = X.left;
+		else if(value > X.value)
+			X = X.right;
+		else
+		{
+			// Si encontramos el nodo en el proceso, lo intercambiamos 
+			// con su sucesor y forzamos el avance a la derecha:
+		}
+		// repetimos mientras el color sea rojo
+		if(X.color == color.RED)
 		{
 			if(value < X.value)
 				X = X.left;
@@ -241,14 +251,54 @@ public class RBTree implements ISearchTree {
 			{
 				// Si encontramos el nodo en el proceso, lo intercambiamos 
 				// con su sucesor y forzamos el avance a la derecha:
-				
 			}
 		}
-		// repetimos mientras el color sea rojo
-		while(X.color == color.RED);
-		
-		// Si el nuevo nodo es negro, rotamos:
-		
+		else
+		{
+			// Si el nuevo nodo es negro, rotamos:
+			RBNode P = X.parent;
+			RBNode T = X.sibling();
+			if(X.isRightSon() && T.isLeftSon())
+			{
+				RBNode L = T.left;
+				RBNode R = T.right;
+				
+				P.setLeft(R);
+				
+				T.parent = P.parent;
+				if(T.parent == null)
+					root = T;
+				else
+					T.parent.changeSon(P, T);
+				
+				T.setRight(P);
+				
+				// Cambiamos los colores:
+				color auxC = P.color;
+				P.color = T.color;
+				T.color = auxC;
+			}
+			else if(X.isLeftSon() && T.isRightSon())
+			{
+				RBNode L = T.right;
+				RBNode R = T.left;
+				
+				P.setRight(R);
+				
+				T.parent = P.parent;
+				if(T.parent == null)
+					root = T;
+				else
+					T.parent.changeSon(P, T);
+				
+				T.setLeft(P);
+				
+				// Cambiamos los colores:
+				color auxC = P.color;
+				P.color = T.color;
+				T.color = auxC;
+			}
+		}
 	}
 	
 	// Intentamos borrar el nodo; si no se puede,
@@ -256,6 +306,14 @@ public class RBTree implements ISearchTree {
 	
 	private void topDownDelete(int value)
 	{
+		if(value == 9910)
+		{
+			int a = 0;
+		}
+		
+		RBNode toDelete = null;
+		int valueToDel = 0;
+		
 		RBNode X = root;
 				
 		root.color = color.RED;
@@ -264,6 +322,18 @@ public class RBTree implements ISearchTree {
 		// hacemos la raíz roja, movemos X al hijo adecuado y llamamos a balanceDelete:
 		if(X.isLeftBlack() && X.isRightBlack())
 		{	
+			if(value == X.value)
+			{
+				RBNode succesor = X.right;
+				
+				while(succesor.left != null)
+					succesor = succesor.left;
+				
+				toDelete = X;
+				valueToDel = succesor.value;
+				value = succesor.value;
+			}
+
 			if(value < X.value)
 				X = X.left;
 			else if(value > X.value)
@@ -276,101 +346,217 @@ public class RBTree implements ISearchTree {
 		{
 			// Testeamos el balance para X:
 			if(X.isLeftBlack() && X.isRightBlack())
+			{
 				balanceDelCaseA(X);
-			else
-			{
-				balanceDelCaseB(X, value);
-			}
-			
-			// actualizamos el valor de X:
-			if(value < X.value)
-				X = X.left;
-			else if(value > X.value)
-				X = X.right;
-			// Si lo encontramos, chequeamos cuántos hijos tiene:
-			else
-			{
-				// 1. no posee hijos; en este caso, como X es rojo basta con borrarlo:
-				if(X.left == null && X.right == null)
+				
+				// Si lo encontramos, chequeamos cuántos hijos tiene:				
+				if(value == X.value)
 				{
-					// Si no tiene papá, entonces es la raiz => la borramos
-					if(X.parent == null)
-						root = null;
-					else if(X.parent.left == X)
-						X.parent.left = null;
-					else if(X.parent.right == X)
-						X.parent.right = null;
-					
-					deleted = true;
-				}
-				// 2. posee 1 hijo
-				else if(X.left == null && X.right != null)
-				{
-					if(X.parent == null)
+					// 1. no posee hijos; en este caso, como X es rojo basta con borrarlo:
+					if(X.left == null && X.right == null)
 					{
-						root = X.right;
-						X.right.parent = root;
-					}else if(X.parent.left == X)
+						// Si no tiene papá, entonces es la raiz => la borramos
+						if(X.parent == null)
+							root = null;
+						else if(X.parent.left == X)
+							X.parent.left = null;
+						else if(X.parent.right == X)
+							X.parent.right = null;
+						
+						deleted = true;
+					}
+					// 2. posee 1 hijo
+					else if(X.left == null && X.right != null)
 					{
-						X.parent.left = X.right;
-						X.right.parent = X.parent;
-					}else if(X.parent.right == X)
+						if(X.parent == null)
+						{
+							root = X.right;
+							X.right.parent = root;
+						}else if(X.parent.left == X)
+						{
+							X.parent.left = X.right;
+							X.right.parent = X.parent;
+						}else if(X.parent.right == X)
+						{
+							X.parent.right = X.right;						
+							X.right.parent = X.parent;
+						}
+						X.right.color = X.color;	// le seteamos el color de X
+						
+						deleted = true;
+					}
+					else if(X.right == null && X.left != null)
 					{
-						X.parent.right = X.right;						
-						X.right.parent = X.parent;
-					}
-					X.right.color = X.color;	// le seteamos el color de X
-					
-					deleted = true;
-				}
-				else if(X.right == null && X.left != null)
-				{
-					if(X.parent == null)
-					{
-						root = X.left;
-						X.left.parent = root;
-					}
-					else if(X.parent.left == X){
-						X.parent.left = X.left;
-						X.left.parent = X.parent;
-					}
-					else if(X.parent.right == X){
-						X.parent.right = X.left;
-						X.left.parent = X.parent;
-					}
-					X.left.color = X.color;	// le seteamos el color de X
+						if(X.parent == null)
+						{
+							root = X.left;
+							X.left.parent = root;
+						}
+						else if(X.parent.left == X){
+							X.parent.left = X.left;
+							X.left.parent = X.parent;
+						}
+						else if(X.parent.right == X){
+							X.parent.right = X.left;
+							X.left.parent = X.parent;
+						}
+						X.left.color = X.color;	// le seteamos el color de X
 
-					deleted = true;
+						deleted = true;
+					}
+					// 3. X tiene 2 hijos. En este caso, reemplazamos por el sucesor
+					// y forzamos el movimiento hacia la derecha
+					else
+					{
+						// En este caso, buscamos el valor del sucesor y reemplazamos 
+						// el valor a borrar por éste; de esta forma siempre estaremos
+						// eliminando un nodo como de los casos anteriores.
+						
+						RBNode succesor = X.right;
+						
+						while(succesor.left != null)
+							succesor = succesor.left;
+						
+						toDelete = X;
+						valueToDel = succesor.value;
+						value = succesor.value;
+						
+						/*
+						// intercambiamos valor con su sucesor (sabemos que tiene pq
+						// tiene 2 hijos => tiene nodo a la derecha!):
+						this.transformToDeletable(X);
+						
+						// forzamos movimiento a la derecha:
+						X = X.right;
+						*/
+						
+						// OBS: Aquí solo entramos 1 vez, puesto que la próxima vez
+						// que lo encontremos tendrá a lo más 1 hijo.
+					}
 				}
-				// 3. X tiene 2 hijos. En este caso, reemplazamos por el sucesor
-				// y forzamos el movimiento hacia la derecha
-				else
-				{
-					// En este caso, buscamos el valor del sucesor y reemplazamos 
-					// el valor a borrar por éste; de esta forma siempre estaremos
-					// eliminando un nodo como de los casos anteriores.
-					
-					// intercambiamos valor con su sucesor (sabemos que tiene pq
-					// tiene 2 hijos => tiene nodo a la derecha!):
-					this.transformToDeletable(X);
-					
-					// forzamos movimiento a la derecha:
+
+				// actualizamos el valor de X:
+				if(value < X.value)
+					X = X.left;
+				else if(value > X.value)
 					X = X.right;
-					
-					// OBS: Aquí solo entramos 1 vez, puesto que la próxima vez
-					// que lo encontremos tendrá a lo más 1 hijo.
-				}
 			}
-			
-			// Finalmente, pintamos la raíz negra:
-			root.color = color.BLACK;
+			else
+			{
+				// Si lo encontramos, chequeamos cuántos hijos tiene:				
+				if(value == X.value)
+				{
+					// 1. no posee hijos; en este caso, como X es rojo basta con borrarlo:
+					if(X.left == null && X.right == null)
+					{
+						// Si no tiene papá, entonces es la raiz => la borramos
+						if(X.parent == null)
+							root = null;
+						else if(X.parent.left == X)
+							X.parent.left = null;
+						else if(X.parent.right == X)
+							X.parent.right = null;
+						
+						deleted = true;
+					}
+					// 2. posee 1 hijo
+					else if(X.left == null && X.right != null)
+					{
+						if(X.parent == null)
+						{
+							root = X.right;
+							X.right.parent = root;
+						}else if(X.parent.left == X)
+						{
+							X.parent.left = X.right;
+							X.right.parent = X.parent;
+						}else if(X.parent.right == X)
+						{
+							X.parent.right = X.right;						
+							X.right.parent = X.parent;
+						}
+						X.right.color = X.color;	// le seteamos el color de X
+						
+						deleted = true;
+					}
+					else if(X.right == null && X.left != null)
+					{
+						if(X.parent == null)
+						{
+							root = X.left;
+							X.left.parent = root;
+						}
+						else if(X.parent.left == X){
+							X.parent.left = X.left;
+							X.left.parent = X.parent;
+						}
+						else if(X.parent.right == X){
+							X.parent.right = X.left;
+							X.left.parent = X.parent;
+						}
+						X.left.color = X.color;	// le seteamos el color de X
+
+						deleted = true;
+					}
+					// 3. X tiene 2 hijos. En este caso, reemplazamos por el sucesor
+					// y forzamos el movimiento hacia la derecha
+					else
+					{
+						// En este caso, buscamos el valor del sucesor y reemplazamos 
+						// el valor a borrar por éste; de esta forma siempre estaremos
+						// eliminando un nodo como de los casos anteriores.
+						
+						RBNode succesor = X.right;
+						
+						while(succesor.left != null)
+							succesor = succesor.left;
+						
+						toDelete = X;
+						valueToDel = succesor.value;
+						value = succesor.value;
+						
+						/*
+						// intercambiamos valor con su sucesor (sabemos que tiene pq
+						// tiene 2 hijos => tiene nodo a la derecha!):
+						this.transformToDeletable(X);
+						
+						// forzamos movimiento a la derecha:
+						X = X.right;
+						*/
+						
+						// OBS: Aquí solo entramos 1 vez, puesto que la próxima vez
+						// que lo encontremos tendrá a lo más 1 hijo.
+					}
+				}
+
+				balanceDelCaseB(X, value);
+				
+				// actualizamos el valor de X:
+				if(value < X.value)
+					X = X.left;
+				else if(value > X.value)
+					X = X.right;
+
+			}
 		}
+		
+		// Si usamos el truco del sucesor, reemplazamos el valor 
+		if(toDelete != null)
+			toDelete.value = valueToDel;
+		
+		// Finalmente, pintamos la raíz negra:
+		root.color = color.BLACK;
 	}
 	
 	private void balanceDelCaseA(RBNode X)
 	{		
 		// CASO A: X tiene 2 hijos negros
-		// ================================		
+		// ================================
+		if(X.parent == null)
+		{
+			int a = 0;
+		}
+		
 		RBNode T = X.sibling();
 		RBNode P = X.parent;
 				
@@ -481,7 +667,12 @@ public class RBTree implements ISearchTree {
 	}
 	
 	@Override
-	public void delete(int value) {
+	public void delete(int value)
+	{
+		topDownDelete(value);
+	}
+	
+	public void delete2(int value) {
 		
 		RBNode node = root;
 		

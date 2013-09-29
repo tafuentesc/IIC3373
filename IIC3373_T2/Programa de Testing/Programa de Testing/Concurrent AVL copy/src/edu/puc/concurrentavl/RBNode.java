@@ -10,7 +10,7 @@ public class RBNode {
 	
 	public void setLeft(RBNode newLeft){
 		
-		if(left.parent == this)
+		if(left != null && left.parent == this)
 			left.parent = null;
 		
 		this.left = newLeft;
@@ -20,7 +20,7 @@ public class RBNode {
 
 	public void setRight(RBNode newRight){
 		
-		if(right.parent == this)
+		if(right != null && right.parent == this)
 			right.parent = null;
 		
 		this.right = newRight;
@@ -30,7 +30,7 @@ public class RBNode {
 	
 	public void changeSon(RBNode formerSon, RBNode newSon)
 	{
-		if(formerSon.parent == this)
+		if(formerSon != null && formerSon.parent == this)
 			formerSon.parent = null;
 		
 		if(this.left == formerSon)
