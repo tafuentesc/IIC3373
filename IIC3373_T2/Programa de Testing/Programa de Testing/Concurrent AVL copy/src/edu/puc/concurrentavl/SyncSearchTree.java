@@ -48,6 +48,9 @@ public class SyncSearchTree implements ISearchTree {
 		return result;
 	}
 	
+	// La idea era usar SyncPolicy para elegir entre los métodos de arriba; sin embargo,
+	// se producía un bug en el código de multipleSearch si éste no estaba en el método
+	// find directamente.
 	@Override
 	public boolean find(int value) {
 		// Permitimos múltiples búsquedas simultáneas:
