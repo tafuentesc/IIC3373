@@ -8,6 +8,56 @@ public class RBNode {
 	public RBNode right;
 	public RBNode parent;
 	
+	public void setLeft(RBNode newLeft){
+		
+		if(left.parent == this)
+			left.parent = null;
+		
+		this.left = newLeft;
+		if(newLeft != null)
+			left.parent = this;
+	}
+
+	public void setRight(RBNode newRight){
+		
+		if(right.parent == this)
+			right.parent = null;
+		
+		this.right = newRight;
+		if(newRight != null)
+			right.parent = this;
+	}
+	
+	public void changeSon(RBNode formerSon, RBNode newSon)
+	{
+		if(formerSon.parent == this)
+			formerSon.parent = null;
+		
+		if(this.left == formerSon)
+			this.left = newSon;
+		else
+			this.right = newSon;
+		
+		// Actualizamos referencia del hijo al padre
+		newSon.parent = this;
+	}
+
+	public boolean isLeftBlack(){
+		return left == null || (left!=null && left.color == color.BLACK);
+	}
+
+	public boolean isRightBlack(){
+		return right == null || (right!=null && right.color == color.BLACK);
+	}
+	
+	public boolean isLeftSon(){
+		return (parent!=null && parent.left == this);
+	}
+
+	public boolean isRightSon(){
+		return (parent!=null && parent.right == this);
+	}
+
 	public RBNode(int value, color color, RBNode parent)
 	{
 		this.value = value;

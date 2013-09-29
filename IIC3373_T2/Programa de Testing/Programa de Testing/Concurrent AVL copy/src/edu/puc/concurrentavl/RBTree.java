@@ -224,8 +224,259 @@ public class RBTree implements ISearchTree {
 		printTree(n.left, s+1);
 		printTree(n.right, s+1);
 	}
+	
+	private void balanceDelete(RBNode X, int value)
+	{
+		if(X.isLeftBlack() && X.isRightBlack())
+		{
+			balanceDelCaseA(X);
+		}
+		else
+			balanceDelCaseB(X, value);
+	}
+	
+	private void transformToDeletable(int value)
+	{
+		// Buscamos el valor y lo intercambiamos con su sucesor
+		// => A lo más tendrá 1 hijo => lo podemos borrar!
+		RBNode aux = root;
+		
+		while(aux != null)
+		{
+			if(value < aux.value)
+				aux = aux.left;
+			else if(value > aux.value)
+				aux = aux.right;
+			else
+			{
+				// buscamos sucesor
+				RBNode succesor = aux.right;
+				
+				// si no tiene sucesor, significa que no tiene hijo derecho
+				// => no hacemos nada!
+				if(succesor == null)
+					return;
+				
+				while(succesor.left != null)
+				{
+					succesor = succesor.left;
+				}				
+				// Si es distinto, intercambiamos sus valores
+				if(succesor != null)
+				{
+					int v = succesor.value;
+					succesor.value = aux.value;
+					aux.value = v;
+				}
+			}
+		}
+	}
+	
+	private void topDownDelete(int value)
+	{
+		RBNode X = root;
+				
+		// Examinamos root: Si ambos hijos son negros (o null) <=> ninguno de sus hijos es rojo, 
+		// hacemos la raíz roja, movemos X al hijo adecuado y llamamos a balanceDelete:
+		if(X.isLeftBlack() && X.isRightBlack())
+		{	
+			root.color = color.RED;
+			
+			if(value < X.value)
+				X = X.left;
+			else if(value > X.value)
+				X = X.right;
+		}
+		
+		while(X!= null && X.value != value)
+		{
+			// Testeamos el balance para X:
+			if(X.isLeftBlack() && X.isRightBlack())
+				balanceDelCaseA(X);
+			else
+				balanceDelCaseB(X, value);
+			
+			// actualizamos el valor de X:
+			if(value < X.value)
+				X = X.left;
+			else if(value > X.value)
+				X = X.right;
+			else
+			{
+				// 1. no posee hijos; en este caso, como X es rojo basta con borrarlo:
+				if(X.left == null && X.right == null)
+				{
+					// Si no tiene papá, entonces es la raiz => la borramos
+					if(X.parent == null)
+						root = null;
+					else if(X.parent.left == X)
+						X.parent.left = null;
+					else if(X.parent.right == X)
+						X.parent.right = null;
+					
+					return;
+				}
+				// 2. posee 1 hijo
+				else if(X.left == null && X.right != null)
+				{
+					if(X.parent == null)
+					{
+						root = X.right;
+						X.right.parent = root;
+					}else if(X.parent.left == X)
+					{
+						X.parent.left = X.right;
+						X.right.parent = X.parent;
+					}else if(X.parent.right == X)
+					{
+						X.parent.right = X.right;						
+						X.right.parent = X.parent;
+					}
+					
+					return;
+				}
+				else if(X.right == null && X.left != null)
+				{
+					if(X.parent == null)
+					{
+						root = X.left;
+						X.left.parent = root;
+					}
+					else if(X.parent.left == X){
+						X.parent.left = X.left;
+						X.left.parent = X.parent;
+					}
+					else if(X.parent.right == X){
+						X.parent.right = X.left;
+						X.left.parent = X.parent;
+					}
+					return;
+				}
+				// 3. X tiene 2 hijos. En este caso, reemplazamos por el sucesor
+				// y forzamos el movimiento en esa dirección
+			}
+		}
+	}
 
+	private void balanceDelCaseB(RBNode X, int value)
+	{
+		// Sabemos que X tiene al menos 1 hijo rojo:
+		// Bajamos el nivel que corresponde
+	}
+	
+	private void balanceDelCaseA(RBNode X)
+	{		
+		// CASO A: X tiene 2 hijos negros
+		// ================================		
+		RBNode T = X.sibling();
+		RBNode P = X.parent;
+				
+		// A.1: Ambos hijos de T son negros
+		if(T.isLeftBlack() && T.isRightBlack())
+		{
+			P.color = color.BLACK;
+			X.color = color.RED;
+			T.color = color.RED;
+		}
+		// A.2: El hijo interior de T es rojo:
+		else if(X.isLeftSon() && !T.isLeftBlack())
+		{
+			// Rotación doble!!!
+			RBNode L = T.left;
+			
+			P.right = L.left;
+			if(P.right != null)
+				P.right.parent = P;
+			
+			T.left = L.right;
+			if(T.left != null)
+				T.left.parent = T;
+			
+			L.parent = P.parent;
+			if(L.parent == null)
+				root = L;
+			else
+				L.parent.changeSon(P, L);
+			
+			L.changeSon(L.left, P);
+			L.changeSon(L.right, T);
+			
+			// Cambiamos los colores:
+			X.color = color.RED;
+			P.color = color.BLACK;
+			//L.color = color.RED; // L ya es rojo!
+		}
+		else if(X.isRightSon() && !T.isRightBlack())
+		{
+			// Rotación doble!!!
+			RBNode L = T.right;
+			
+			P.left = L.right;
+			if(P.left != null)
+				P.left.parent = P;
+			
+			T.right = L.left;
+			if(T.right != null)
+				T.right.parent = T;
+			
+			L.parent = P.parent;
+			if(L.parent == null)
+				root = L;
+			else
+				L.parent.changeSon(P, L);
+			
+			L.changeSon(L.right, P);
+			L.changeSon(L.left, T);
 
+			// Cambiamos los colores:
+			X.color = color.RED;
+			P.color = color.BLACK;
+		}
+		// A.3: el hijo exterior de T es rojo:
+		else if(X.isLeftSon() && !T.isRightBlack())
+		{
+			RBNode L = T.left;
+			RBNode R = T.right;
+			
+			P.setRight(L);
+			
+			T.parent = P.parent;
+			if(T.parent == null)
+				root = T;
+			else
+				T.parent.changeSon(P, T);
+			
+			T.setLeft(P);
+
+			// Cambiamos los colores:
+			X.color = color.RED;
+			P.color = color.BLACK;
+			T.color = color.RED;
+			R.color = color.BLACK;
+		}
+		else if(X.isRightSon() && !T.isLeftBlack())
+		{
+			RBNode L = T.right;
+			RBNode R = T.left;
+			
+			P.setLeft(L);
+			
+			T.parent = P.parent;
+			if(T.parent == null)
+				root = T;
+			else
+				T.parent.changeSon(P, T);
+			
+			T.setRight(P);
+
+			// Cambiamos los colores:
+			X.color = color.RED;
+			P.color = color.BLACK;
+			T.color = color.RED;
+			R.color = color.BLACK;
+		}
+	}
+	
 	@Override
 	public void delete(int value) {
 		
@@ -372,4 +623,5 @@ public class RBTree implements ISearchTree {
 			}
 		}
 	}
+
 }
