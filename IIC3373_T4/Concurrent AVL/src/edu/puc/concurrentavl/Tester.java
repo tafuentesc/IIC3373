@@ -14,7 +14,7 @@ public class Tester {
     public static void main(String[] args) {
 //        System.out.println("Enter test file path: ");
         Scanner scanner = new Scanner(System.in);
-    	String path ="Test/test0.txt";
+    	String path ="Test/test2.txt";
 //        String path = scanner.nextLine();
 //        scanner.close();
     	

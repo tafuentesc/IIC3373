@@ -1,14 +1,29 @@
 package edu.puc.concurrentavl;
 
 import java.awt.Color;
+import java.util.concurrent.Semaphore;
 
 public class Node {
 	public int value;
 	public boolean isRoutingNode;
+	public final Semaphore nodeSem = new Semaphore(1, false); 
 	
 	public Node left;
 	public Node right;
 	public Node parent;
+//	
+//	public void acquireNode(){
+//		try{
+//			nodeSem.acquire();
+//		}
+//		catch(InterruptedException e){
+//			e.printStackTrace();
+//		}
+//	}
+//
+//	public void releaseNode(){
+//		nodeSem.release();
+//	}
 
 	public Node(int value, Node parent)
 	{
@@ -51,7 +66,8 @@ public class Node {
 			this.right = newSon;
 		
 		// Actualizamos referencia del hijo al padre
-		newSon.parent = this;
+		if(newSon != null)
+			newSon.parent = this;
 	}
 	
 	public boolean isLeftSon(){
