@@ -14,7 +14,7 @@ public class Tester {
     public static void main(String[] args) {
 //        System.out.println("Enter test file path: ");
         Scanner scanner = new Scanner(System.in);
-    	String path ="Test/test2.txt";
+    	String path ="Test/test0.txt";
 //        String path = scanner.nextLine();
 //        scanner.close();
     	
@@ -38,7 +38,7 @@ public class Tester {
             }
             scanner.close();
 
-            ISearchTree tree = new BinaryTree();  // Reemplazar con la
+            ISearchTree tree = new BinaryTree(ApparentBalanceMode.EXACT);  // Reemplazar con la
             // implementacion del alumno
 
             TestThread[] threads = new TestThread[numberOfThreads];
@@ -58,15 +58,14 @@ public class Tester {
             System.out.println("Test Passed");
             long delta = System.currentTimeMillis() - time;
             System.out.println("The test took " + delta + " ms.");
-
-
+            
+            ((BinaryTree)tree).stopMaintenance(0);
+            tree.printTree();
 
         } catch (FileNotFoundException e) {
             System.out
             .println("No file found at specified path, test aborted.");
         }
-
-
 
     }
 

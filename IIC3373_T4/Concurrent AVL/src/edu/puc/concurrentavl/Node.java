@@ -1,29 +1,18 @@
 package edu.puc.concurrentavl;
 
-import java.awt.Color;
 import java.util.concurrent.Semaphore;
 
 public class Node {
 	public int value;
 	public boolean isRoutingNode;
-	public final Semaphore nodeSem = new Semaphore(1, false); 
+	public final Semaphore nodeSem = new Semaphore(1, true); 
 	
 	public Node left;
 	public Node right;
 	public Node parent;
-//	
-//	public void acquireNode(){
-//		try{
-//			nodeSem.acquire();
-//		}
-//		catch(InterruptedException e){
-//			e.printStackTrace();
-//		}
-//	}
-//
-//	public void releaseNode(){
-//		nodeSem.release();
-//	}
+	
+	public int rightHeight;		// Altura aparente derecha
+	public int leftHeight;		// Altura aparente izquierda
 
 	public Node(int value, Node parent)
 	{
@@ -33,6 +22,10 @@ public class Node {
 		this.parent = parent;
 		this.left = null;
 		this.right = null;
+		
+		// Seteamos las alturas aparentes en 0
+		rightHeight = 0;
+		leftHeight = 0;
 	}
 	
 	public void setLeft(Node newLeft){
